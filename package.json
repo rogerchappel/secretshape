@@ -4,6 +4,9 @@
   "description": "Describe and validate required secret shapes without exposing values.",
   "type": "module",
   "main": "./src/index.js",
+  "bin": {
+    "secretshape": "./src/cli.js"
+  },
   "exports": {
     ".": "./src/index.js"
   },
