@@ -1,6 +1,6 @@
 # secretshape PRD
 
-Status: in-progress
+Status: local MVP implemented
 
 ## Summary
 
