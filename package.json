@@ -12,14 +12,26 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "scripts/smoke.sh"
   ],
   "scripts": {
     "test": "node --test",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run package:smoke"
+    "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
+    "build": "node --check src/cli.js",
+    "smoke": "bash scripts/smoke.sh"
   },
   "keywords": [],
   "author": "Roger Chappel",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rogerchappel/secretshape.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/secretshape/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/secretshape#readme"
 }
