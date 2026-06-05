@@ -12,7 +12,8 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "node --test",
@@ -21,5 +22,13 @@
   },
   "keywords": [],
   "author": "Roger Chappel",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rogerchappel/secretshape.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/secretshape/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/secretshape#readme"
 }
