@@ -13,12 +13,15 @@
   "files": [
     "src",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "scripts/smoke.sh"
   ],
   "scripts": {
     "test": "node --test",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run package:smoke"
+    "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
+    "build": "node --check src/cli.js",
+    "smoke": "bash scripts/smoke.sh"
   },
   "keywords": [],
   "author": "Roger Chappel",
