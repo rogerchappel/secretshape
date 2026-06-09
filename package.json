@@ -14,7 +14,10 @@
     "src",
     "README.md",
     "LICENSE",
-    "scripts/smoke.sh"
+    "scripts/smoke.sh",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
   ],
   "scripts": {
     "test": "node --test",
