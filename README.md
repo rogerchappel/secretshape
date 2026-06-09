@@ -98,3 +98,17 @@ npm test
 npm run package:smoke
 npm run release:check
 ```
+
+## Verification
+
+Run the release-readiness checks before publishing or cutting a PR:
+
+```bash
+npm run build
+npm run test
+npm run smoke
+npm run package:smoke
+npm run release:check
+```
+
+Use `npm run package:smoke` or `npm pack --dry-run` to confirm the published tarball includes the support docs and runnable package contents.
