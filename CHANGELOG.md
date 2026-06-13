@@ -10,6 +10,8 @@ format and uses semantic versioning when versioned releases are published.
 ### Added
 
 - Initial project setup.
+- Release-candidate quickstart, package contents notes, and committed example
+  schema for smoke testing.
 
 ## Release Links
 

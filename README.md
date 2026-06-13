@@ -11,10 +11,13 @@ invalid entries by name and category only.
 This repository is early-stage. The V1 CLI supports schema initialization,
 shape checks, Markdown documentation generation, and JSON output for CI.
 
-## Install
+## Install from a checkout
 
 ```sh
+git clone https://github.com/rogerchappel/secretshape.git
+cd secretshape
 npm install
+npm test
 ```
 
 ## Use
@@ -63,15 +66,20 @@ Generate Markdown docs:
 npx secretshape docs --schema secretshape.yaml --out docs/secrets.md
 ```
 
-## Verify
-
-Run the local validation script before opening a pull request:
+Try the committed fixture without writing generated files into your project:
 
 ```sh
-bash scripts/validate.sh
+node src/cli.js check \
+  --schema examples/basic/secretshape.yaml \
+  --example examples/basic/.env.example
 ```
 
-`scripts/validate.sh` runs the repository's standard local checks when they are defined and will also run `agent-qc ready` when `agent-qc` is installed. Missing `agent-qc` is treated as a skip, not a failure.
+## Package Contents
+
+The npm package allowlist includes the runtime source, smoke script, public
+support docs, and `examples/basic` fixture. Run `npm run package:smoke` before
+publishing to confirm the tarball still includes the runnable CLI and example
+schema.
 
 ## Contributing
 
@@ -80,10 +88,9 @@ should be small, reviewable, and verified before review.
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance. Replace
-the default security policy before publishing the generated repository.
-
-These links assume this README has been copied to the generated repository root.
+See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance. `secretshape`
+checks names, documentation, and shape constraints. It does not print secret
+values, but review schemas and generated docs before sharing them publicly.
 
 ## License
 
@@ -91,24 +98,16 @@ MIT
 
 ## Verification
 
-Run these checks before opening a PR or publishing a release:
-
-```bash
-npm test
-npm run package:smoke
-npm run release:check
-```
-
-## Verification
-
 Run the release-readiness checks before publishing or cutting a PR:
 
 ```bash
 npm run build
-npm run test
+npm test
 npm run smoke
 npm run package:smoke
 npm run release:check
 ```
 
-Use `npm run package:smoke` or `npm pack --dry-run` to confirm the published tarball includes the support docs and runnable package contents.
+`scripts/validate.sh` runs the same package scripts and also runs
+`agent-qc ready` when that optional tool is installed. Missing `agent-qc` is
+treated as a skip, not a failure.
