@@ -30,6 +30,9 @@
   "keywords": [],
   "author": "Roger Chappel",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rogerchappel/secretshape.git"
