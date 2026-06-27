@@ -74,6 +74,21 @@ node src/cli.js check \
   --example examples/basic/.env.example
 ```
 
+## Demo walkthrough
+
+Run the fixture-backed demo to validate the example contract, emit JSON
+evidence, and generate Markdown docs:
+
+```sh
+bash demo/validate-secret-docs.sh
+```
+
+See
+[`docs/tutorials/secret-docs-without-values.md`](docs/tutorials/secret-docs-without-values.md)
+for the review flow and
+[`docs/promo/social-hooks.md`](docs/promo/social-hooks.md) for promotion-ready
+post drafts grounded in the checked-in fixture.
+
 ## Package Contents
 
 The npm package allowlist includes the runtime source, smoke script, public
