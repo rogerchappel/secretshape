@@ -27,7 +27,13 @@
     "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
     "smoke": "bash scripts/smoke.sh"
   },
-  "keywords": [],
+  "keywords": [
+    "secrets",
+    "env",
+    "schema",
+    "validation",
+    "documentation"
+  ],
   "author": "Roger Chappel",
   "license": "MIT",
   "engines": {
