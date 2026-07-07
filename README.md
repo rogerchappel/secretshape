@@ -126,3 +126,7 @@ npm run release:check
 `scripts/validate.sh` runs the same package scripts and also runs
 `agent-qc ready` when that optional tool is installed. Missing `agent-qc` is
 treated as a skip, not a failure.
+
+## Limitations
+
+secretshape is a local-first helper for preparing reviewable evidence. It does not replace human review, live system validation, or project-specific policy checks, and generated output should be inspected before use in release or operational decisions.
