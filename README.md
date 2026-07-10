@@ -83,11 +83,19 @@ evidence, and generate Markdown docs:
 bash demo/validate-secret-docs.sh
 ```
 
+For a CI-shaped variant that writes evidence to a temporary artifact directory:
+
+```sh
+bash demo/ci-secretshape-gate.sh
+```
+
 See
 [`docs/tutorials/secret-docs-without-values.md`](docs/tutorials/secret-docs-without-values.md)
 for the review flow and
 [`docs/promo/social-hooks.md`](docs/promo/social-hooks.md) for promotion-ready
-post drafts grounded in the checked-in fixture.
+post drafts grounded in the checked-in fixture. A short screencast outline lives
+in
+[`docs/promo/ci-secretshape-gate-video-brief.md`](docs/promo/ci-secretshape-gate-video-brief.md).
 
 ## Package Contents
 
