@@ -74,6 +74,16 @@ node src/cli.js check \
   --example examples/basic/.env.example
 ```
 
+## Demo Recipes
+
+- [Document team onboarding secrets](docs/tutorials/team-onboarding-secret-shapes.md)
+  shows a fixture for GitHub and OpenAI token shapes plus generated Markdown
+  docs.
+- `bash demo/team-onboarding-secret-shapes.sh` verifies the onboarding fixture
+  and writes reviewable JSON and Markdown outputs under `/tmp`.
+- [Social hooks](docs/promo/social-hooks.md) provides grounded post drafts and
+  demo commands for promotion.
+
 ## Package Contents
 
 The npm package allowlist includes the runtime source, smoke script, public
