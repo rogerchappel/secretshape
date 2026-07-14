@@ -74,15 +74,36 @@ node src/cli.js check \
   --example examples/basic/.env.example
 ```
 
-## Demo Recipes
+## Demo walkthrough
+
+Run the fixture-backed demo to validate the example contract, emit JSON
+evidence, and generate Markdown docs:
+
+```sh
+bash demo/validate-secret-docs.sh
+```
+
+For a CI-shaped variant that writes evidence to a temporary artifact directory:
+
+```sh
+bash demo/ci-secretshape-gate.sh
+```
+
+See
+[`docs/tutorials/secret-docs-without-values.md`](docs/tutorials/secret-docs-without-values.md)
+for the review flow and
+[`docs/promo/social-hooks.md`](docs/promo/social-hooks.md) for promotion-ready
+post drafts grounded in the checked-in fixture. A short screencast outline lives
+in
+[`docs/promo/ci-secretshape-gate-video-brief.md`](docs/promo/ci-secretshape-gate-video-brief.md).
+
+Additional onboarding assets from this sweep:
 
 - [Document team onboarding secrets](docs/tutorials/team-onboarding-secret-shapes.md)
   shows a fixture for GitHub and OpenAI token shapes plus generated Markdown
   docs.
 - `bash demo/team-onboarding-secret-shapes.sh` verifies the onboarding fixture
   and writes reviewable JSON and Markdown outputs under `/tmp`.
-- [Social hooks](docs/promo/social-hooks.md) provides grounded post drafts and
-  demo commands for promotion.
 
 ## Package Contents
 
@@ -121,3 +142,7 @@ npm run release:check
 `scripts/validate.sh` runs the same package scripts and also runs
 `agent-qc ready` when that optional tool is installed. Missing `agent-qc` is
 treated as a skip, not a failure.
+
+## Limitations
+
+secretshape is a local-first helper for preparing reviewable evidence. It does not replace human review, live system validation, or project-specific policy checks, and generated output should be inspected before use in release or operational decisions.

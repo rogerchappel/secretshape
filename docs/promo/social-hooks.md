@@ -1,25 +1,38 @@
-# Social hooks for secretshape
+# SecretShape social hooks
 
-## Hook pack
+## Short posts
 
-1. Your `.env.example` can drift from what the app actually expects. secretshape
+1. Secret docs should explain names and constraints, not leak values.
+   SecretShape validates `.env.example` against a small schema and can generate
+   Markdown docs from that schema.
+
+2. A public `.env.example` is easier to trust when required keys, enum values,
+   and patterns are checked in CI. SecretShape keeps that check local and
+   scriptable.
+
+3. Onboarding docs drift when secret requirements live only in prose.
+   SecretShape turns those requirements into a schema, a validation check, and
+   generated docs.
+
+4. Your `.env.example` can drift from what the app actually expects. SecretShape
    checks the names and shapes without printing real secrets.
-2. Instead of asking contributors to paste token values into a review, document
-   the required shapes and verify placeholders locally.
-3. A tiny `secretshape.yaml` can turn secret onboarding into a repeatable
-   checklist: required names, allowed enum values, and safe generated docs.
-4. For CI handoffs, `secretshape check --json` gives reviewers a machine-readable
+
+5. For CI handoffs, `secretshape check --json` gives reviewers a machine-readable
    summary of missing, stale, or invalid secret docs.
-5. The demo fixture shows GitHub and OpenAI token shapes with fake placeholder
-   values, then generates a Markdown table for onboarding docs.
 
 ## Grounded demo commands
 
 ```sh
+bash demo/validate-secret-docs.sh
 bash demo/team-onboarding-secret-shapes.sh
 node src/cli.js check --schema examples/basic/secretshape.yaml --example examples/basic/.env.example
 node src/cli.js docs --schema examples/team-onboarding/secretshape.yaml --out /tmp/secretshape-team-onboarding.md
 ```
+
+## Demo angle
+
+Run `bash demo/validate-secret-docs.sh` to validate the committed basic fixture
+and generate a publishable Markdown secret reference under `demo/output/`.
 
 ## Boundaries
 

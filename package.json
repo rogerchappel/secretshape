@@ -27,9 +27,18 @@
     "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
     "smoke": "bash scripts/smoke.sh"
   },
-  "keywords": [],
+  "keywords": [
+    "secrets",
+    "env",
+    "schema",
+    "validation",
+    "documentation"
+  ],
   "author": "Roger Chappel",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rogerchappel/secretshape.git"
