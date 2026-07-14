@@ -97,6 +97,14 @@ post drafts grounded in the checked-in fixture. A short screencast outline lives
 in
 [`docs/promo/ci-secretshape-gate-video-brief.md`](docs/promo/ci-secretshape-gate-video-brief.md).
 
+Additional onboarding assets from this sweep:
+
+- [Document team onboarding secrets](docs/tutorials/team-onboarding-secret-shapes.md)
+  shows a fixture for GitHub and OpenAI token shapes plus generated Markdown
+  docs.
+- `bash demo/team-onboarding-secret-shapes.sh` verifies the onboarding fixture
+  and writes reviewable JSON and Markdown outputs under `/tmp`.
+
 ## Package Contents
 
 The npm package allowlist includes the runtime source, smoke script, public
