@@ -60,6 +60,13 @@ Emit JSON for automation:
 npx secretshape check --schema secretshape.yaml --example .env.example --json
 ```
 
+Fail CI when stale documented names are present, even if required secrets are
+otherwise valid:
+
+```sh
+npx secretshape check --schema secretshape.yaml --example .env.example --fail-on-warning
+```
+
 Generate Markdown docs:
 
 ```sh

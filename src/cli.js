@@ -33,14 +33,18 @@ export async function main(argv = process.argv.slice(2), io = process) {
         examplePath: options.example ?? ".env.example",
         localPath: options.local,
       });
+      const failed = result.ok === false || (options["fail-on-warning"] && result.summary.warnings > 0);
 
       if (options.json) {
-        io.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+        io.stdout.write(`${JSON.stringify({ ...result, failed }, null, 2)}\n`);
       } else {
         writeHumanCheck(result, io.stdout);
+        if (failed && result.ok) {
+          io.stdout.write("secretshape: failed because --fail-on-warning was set\n");
+        }
       }
 
-      return result.ok ? 0 : 1;
+      return failed ? 1 : 0;
     }
 
     if (command === "docs") {
@@ -68,8 +72,8 @@ function parseOptions(args) {
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
-    if (arg === "--json") {
-      options.json = true;
+    if (arg === "--json" || arg === "--fail-on-warning") {
+      options[arg.slice(2)] = true;
       continue;
     }
 
@@ -105,7 +109,7 @@ function writeHumanCheck(result, stdout) {
 function usage() {
   return `Usage:
   secretshape init
-  secretshape check --schema secretshape.yaml --example .env.example [--local .env.local] [--json]
+  secretshape check --schema secretshape.yaml --example .env.example [--local .env.local] [--json] [--fail-on-warning]
   secretshape docs --schema secretshape.yaml --out docs/secrets.md
 `;
 }
