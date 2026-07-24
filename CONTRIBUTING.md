@@ -72,6 +72,10 @@ Examples:
 - Build: run the smallest build command that covers the change.
 - Manual QA: provide exact steps and observed result.
 
+Run `npm ci` before package verification. Commit `package-lock.json` changes
+whenever `package.json` changes so local checks use the same deterministic
+dependency install as CI and tagged releases.
+
 If verification cannot be run, explain why and provide the exact command maintainers should run.
 
 ## Maintainer Review

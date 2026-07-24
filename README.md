@@ -139,12 +139,17 @@ MIT
 Run the release-readiness checks before publishing or cutting a PR:
 
 ```bash
+npm ci
 npm run build
 npm test
 npm run smoke
 npm run package:smoke
 npm run release:check
 ```
+
+The committed `package-lock.json` is the release dependency source of truth.
+Keep it in sync with `package.json`; CI, release dry runs, and tagged releases
+all use `npm ci` so lockfile drift fails before publishing.
 
 `scripts/validate.sh` runs the same package scripts and also runs
 `agent-qc ready` when that optional tool is installed. Missing `agent-qc` is
