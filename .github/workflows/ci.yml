@@ -53,11 +53,5 @@ jobs:
           set -euo pipefail
 
           test -f package.json
-
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-
+          npm ci
           npm run release:check
