@@ -48,6 +48,11 @@ Validate `.env.example`:
 npx secretshape check --schema secretshape.yaml --example .env.example
 ```
 
+Each `pattern` must be valid JavaScript regular-expression syntax. SecretShape
+validates and compiles patterns when it loads the schema, so a malformed pattern
+reports the schema path and secret name before any environment values are
+checked.
+
 Validate optional local config shape without printing values:
 
 ```sh

@@ -37,6 +37,17 @@ export function parseSchema(source, sourceName = "schema") {
       throw new Error(`${sourceName}: "${name}.pattern" must be a string`);
     }
 
+    if (normalized.pattern !== undefined) {
+      try {
+        normalized.compiledPattern = new RegExp(normalized.pattern);
+      } catch (error) {
+        throw new Error(
+          `${sourceName}: invalid pattern for "${name}.pattern": ${error.message}`,
+          { cause: error },
+        );
+      }
+    }
+
     if (normalized.enum !== undefined) {
       if (!Array.isArray(normalized.enum) || normalized.enum.some((value) => typeof value !== "string")) {
         throw new Error(`${sourceName}: "${name}.enum" must be a string array`);
