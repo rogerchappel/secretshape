@@ -115,7 +115,7 @@ function validateEntry(issues, secret, entry, source) {
     });
   }
 
-  if (secret.pattern && !new RegExp(secret.pattern).test(entry.value)) {
+  if (secret.compiledPattern && !secret.compiledPattern.test(entry.value)) {
     issues.push({
       severity: "error",
       code: "pattern_mismatch",
