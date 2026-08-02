@@ -66,3 +66,48 @@ test("check command can fail CI on stale documented warnings", async () => {
   assert.equal(parsed.failed, true);
   assert.equal(parsed.summary.warnings, 1);
 });
+
+test("check command rejects a misspelled option before reading default files", async () => {
+  let stderr = "";
+  const code = await main(["check", "--scheam", "intended.yaml", "--json"], {
+    stdout: { write: () => assert.fail("validation must not run") },
+    stderr: { write: (value) => (stderr += value) },
+  });
+
+  assert.equal(code, 1);
+  assert.equal(stderr, "unknown option: --scheam\n");
+});
+
+test("commands reject options that belong to another command", async () => {
+  for (const [argv, option] of [
+    [["check", "--out", "secrets.md"], "--out"],
+    [["docs", "--example", ".env.example"], "--example"],
+    [["docs", "--json"], "--json"],
+  ]) {
+    let stderr = "";
+    const code = await main(argv, {
+      stdout: { write: () => assert.fail("command must not run") },
+      stderr: { write: (value) => (stderr += value) },
+    });
+
+    assert.equal(code, 1);
+    assert.equal(stderr, `unknown option: ${option}\n`);
+  }
+});
+
+test("value options reject missing values and positional arguments", async () => {
+  for (const [argv, message] of [
+    [["check", "--schema", "--json"], "missing value for --schema"],
+    [["docs", "--out"], "missing value for --out"],
+    [["check", "schema.yaml"], "unexpected argument: schema.yaml"],
+  ]) {
+    let stderr = "";
+    const code = await main(argv, {
+      stdout: { write: () => assert.fail("command must not run") },
+      stderr: { write: (value) => (stderr += value) },
+    });
+
+    assert.equal(code, 1);
+    assert.equal(stderr, `${message}\n`);
+  }
+});

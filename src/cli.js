@@ -16,6 +16,15 @@ const DEFAULT_SCHEMA = `secrets:
     description: Runtime environment
 `;
 
+const CHECK_OPTIONS = {
+  schema: "value",
+  example: "value",
+  local: "value",
+  json: "boolean",
+  "fail-on-warning": "boolean",
+};
+const DOCS_OPTIONS = { schema: "value", out: "value" };
+
 export async function main(argv = process.argv.slice(2), io = process) {
   const [command, ...args] = argv;
 
@@ -27,7 +36,7 @@ export async function main(argv = process.argv.slice(2), io = process) {
     }
 
     if (command === "check") {
-      const options = parseOptions(args);
+      const options = parseOptions(args, CHECK_OPTIONS);
       const result = await checkFiles({
         schemaPath: options.schema ?? "secretshape.yaml",
         examplePath: options.example ?? ".env.example",
@@ -48,7 +57,7 @@ export async function main(argv = process.argv.slice(2), io = process) {
     }
 
     if (command === "docs") {
-      const options = parseOptions(args);
+      const options = parseOptions(args, DOCS_OPTIONS);
       const outPath = options.out ?? "docs/secrets.md";
       await mkdir(dirname(outPath), { recursive: true });
       await writeDocs({
@@ -67,21 +76,25 @@ export async function main(argv = process.argv.slice(2), io = process) {
   }
 }
 
-function parseOptions(args) {
+function parseOptions(args, allowedOptions) {
   const options = {};
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
-    if (arg === "--json" || arg === "--fail-on-warning") {
-      options[arg.slice(2)] = true;
-      continue;
-    }
-
     if (!arg.startsWith("--")) {
       throw new Error(`unexpected argument: ${arg}`);
     }
 
     const key = arg.slice(2);
+    const kind = allowedOptions[key];
+    if (!kind) {
+      throw new Error(`unknown option: ${arg}`);
+    }
+    if (kind === "boolean") {
+      options[key] = true;
+      continue;
+    }
+
     const value = args[index + 1];
     if (!value || value.startsWith("--")) {
       throw new Error(`missing value for ${arg}`);
