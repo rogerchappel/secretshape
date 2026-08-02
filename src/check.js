@@ -22,7 +22,7 @@ export function checkShapes({ schema, example, local = null }) {
       name: parseError.name,
       source: "example",
       line: parseError.line,
-      message: `invalid .env line at ${parseError.line}`,
+      message: formatParseError(parseError, "example"),
     });
   }
 
@@ -68,7 +68,7 @@ export function checkShapes({ schema, example, local = null }) {
         name: parseError.name,
         source: "local",
         line: parseError.line,
-        message: `invalid local env line at ${parseError.line}`,
+        message: formatParseError(parseError, "local"),
       });
     }
 
@@ -101,6 +101,13 @@ export function checkShapes({ schema, example, local = null }) {
       warnings: issues.filter((issue) => issue.severity === "warning").length,
     },
   };
+}
+
+function formatParseError(error, source) {
+  if (error.code === "duplicate_variable") {
+    return `${error.name} is defined more than once in ${source} (lines ${error.firstLine} and ${error.line})`;
+  }
+  return `invalid ${source} env line at ${error.line}`;
 }
 
 function validateEntry(issues, secret, entry, source) {
