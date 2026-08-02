@@ -8,7 +8,7 @@ export async function loadSchema(path) {
 }
 
 export function parseSchema(source, sourceName = "schema") {
-  const parsed = parseYamlSubset(source);
+  const parsed = parseYamlSubset(source, sourceName);
   const secrets = parsed.secrets;
 
   if (!secrets || typeof secrets !== "object" || Array.isArray(secrets)) {
@@ -70,12 +70,13 @@ export function parseSchema(source, sourceName = "schema") {
   };
 }
 
-function parseYamlSubset(source) {
+function parseYamlSubset(source, sourceName) {
   const root = {};
-  const stack = [{ indent: -1, value: root }];
+  const stack = [{ indent: -1, value: root, path: [] }];
+  const definitions = new WeakMap([[root, new Map()]]);
   const lines = source.split(/\r?\n/);
 
-  for (const rawLine of lines) {
+  for (const [index, rawLine] of lines.entries()) {
     const withoutComment = stripComment(rawLine);
     if (!withoutComment.trim()) {
       continue;
@@ -104,10 +105,21 @@ function parseYamlSubset(source) {
       throw new Error(`Cannot assign "${key}" under a scalar value`);
     }
 
+    const lineNumber = index + 1;
+    const parentDefinitions = definitions.get(parent);
+    if (parentDefinitions.has(key)) {
+      const keyPath = [...stack.at(-1).path, key].join(".");
+      throw new Error(
+        `${sourceName}:${lineNumber}: duplicate key "${keyPath}" (first defined at line ${parentDefinitions.get(key)})`,
+      );
+    }
+    parentDefinitions.set(key, lineNumber);
+
     if (rawValue === "") {
       const child = {};
       parent[key] = child;
-      stack.push({ indent, value: child });
+      definitions.set(child, new Map());
+      stack.push({ indent, value: child, path: [...stack.at(-1).path, key] });
     } else {
       parent[key] = parseScalar(rawValue);
     }

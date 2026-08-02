@@ -53,6 +53,12 @@ validates and compiles patterns when it loads the schema, so a malformed pattern
 reports the schema path and secret name before any environment values are
 checked.
 
+Keys must be unique within each schema map: duplicate secret names and duplicate
+fields such as `required` are rejected with the schema path, key path, and line
+numbers. Variables must likewise appear only once in each example or local env
+file. `check` reports both duplicate-definition line numbers, exits non-zero in
+human and JSON modes, and never includes the associated values in its output.
+
 Validate optional local config shape without printing values:
 
 ```sh

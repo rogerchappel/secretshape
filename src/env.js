@@ -25,6 +25,17 @@ export function parseEnvShape(source) {
     }
 
     const [, name, rawValue] = match;
+    const previous = entries.get(name);
+    if (previous) {
+      errors.push({
+        line: lineNumber,
+        firstLine: previous.line,
+        code: "duplicate_variable",
+        name,
+      });
+      return;
+    }
+
     const value = normalizeValue(rawValue);
     entries.set(name, {
       name,

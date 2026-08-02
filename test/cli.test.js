@@ -27,6 +27,47 @@ test("check command emits JSON and returns non-zero on errors", async () => {
   assert.equal(JSON.parse(stdout).issues[0].code, "missing_required");
 });
 
+test("check and check --json fail on duplicate example and local variables", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "secretshape-"));
+  const schemaPath = join(dir, "secretshape.yaml");
+  const examplePath = join(dir, ".env.example");
+  const localPath = join(dir, ".env.local");
+  await writeFile(schemaPath, "secrets:\n  API_KEY:\n    required: true\n");
+  await writeFile(examplePath, "API_KEY=first-sensitive-value\nAPI_KEY=second-sensitive-value\n");
+  await writeFile(localPath, "API_KEY=first-local-sensitive-value\nAPI_KEY=second-local-sensitive-value\n");
+
+  let stdout = "";
+  const jsonCode = await main(
+    ["check", "--schema", schemaPath, "--example", examplePath, "--local", localPath, "--json"],
+    {
+      stdout: { write: (value) => (stdout += value) },
+      stderr: { write: () => {} },
+    },
+  );
+
+  const result = JSON.parse(stdout);
+  assert.equal(jsonCode, 1);
+  assert.equal(result.failed, true);
+  assert.deepEqual(result.issues.map(({ source, code }) => ({ source, code })), [
+    { source: "example", code: "duplicate_variable" },
+    { source: "local", code: "duplicate_variable" },
+  ]);
+  assert.doesNotMatch(stdout, /sensitive-value/);
+
+  stdout = "";
+  const humanCode = await main(
+    ["check", "--schema", schemaPath, "--example", examplePath, "--local", localPath],
+    {
+      stdout: { write: (value) => (stdout += value) },
+      stderr: { write: () => {} },
+    },
+  );
+  assert.equal(humanCode, 1);
+  assert.match(stdout, /ERROR example:2 duplicate_variable API_KEY/);
+  assert.match(stdout, /ERROR local:2 duplicate_variable API_KEY/);
+  assert.doesNotMatch(stdout, /sensitive-value/);
+});
+
 test("docs command writes markdown output", async () => {
   const dir = await mkdtemp(join(tmpdir(), "secretshape-"));
   const schemaPath = join(dir, "secretshape.yaml");
