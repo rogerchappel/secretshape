@@ -38,3 +38,23 @@ test("compiles valid patterns when the schema is parsed", () => {
   assert.equal(schema.secrets.API_KEY.compiledPattern.test("sk_valid"), true);
   assert.equal(schema.secrets.API_KEY.compiledPattern.test("invalid"), false);
 });
+
+test("rejects duplicate secret names with source and line context", () => {
+  assert.throws(
+    () => parseSchema(
+      "secrets:\n  API_KEY:\n    required: true\n  API_KEY:\n    required: false\n",
+      "config/secretshape.yaml",
+    ),
+    /config\/secretshape\.yaml:4: duplicate key "secrets\.API_KEY" \(first defined at line 2\)/,
+  );
+});
+
+test("rejects duplicate shape fields at the same scope", () => {
+  assert.throws(
+    () => parseSchema(
+      "secrets:\n  API_KEY:\n    required: true\n    required: false\n",
+      "secretshape.yaml",
+    ),
+    /secretshape\.yaml:4: duplicate key "secrets\.API_KEY\.required" \(first defined at line 3\)/,
+  );
+});
