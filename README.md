@@ -78,6 +78,11 @@ Generate Markdown docs:
 npx secretshape docs --schema secretshape.yaml --out docs/secrets.md
 ```
 
+`check` accepts `--schema <path>`, `--example <path>`, `--local <path>`,
+`--json`, and `--fail-on-warning`. `docs` accepts `--schema <path>` and
+`--out <path>`. Unknown options, options for another command, and missing option
+values exit non-zero without running validation or documentation generation.
+
 Try the committed fixture without writing generated files into your project:
 
 ```sh
