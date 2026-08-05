@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./src/index.js",
   "bin": {
-    "secretshape": "./src/cli.js"
+    "secretshape": "./src/bin.js"
   },
   "exports": {
     ".": "./src/index.js"
@@ -22,9 +22,9 @@
     "CONTRIBUTING.md"
   ],
   "scripts": {
-    "build": "node --check src/cli.js && node --check src/index.js && node --check src/check.js && node --check src/docs.js && node --check src/env.js && node --check src/schema.js",
+    "build": "node --check src/bin.js && node --check src/cli.js && node --check src/index.js && node --check src/check.js && node --check src/docs.js && node --check src/env.js && node --check src/schema.js",
     "test": "node --test",
-    "package:smoke": "npm pack --dry-run",
+    "package:smoke": "bash scripts/package-smoke.sh",
     "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke",
     "smoke": "bash scripts/smoke.sh"
   },
