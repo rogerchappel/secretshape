@@ -42,6 +42,10 @@ secrets:
     description: Runtime environment
 ```
 
+The top level accepts only `secrets`. Each secret accepts only `required`,
+`pattern`, `enum`, and `description`; unsupported keys are rejected with their
+schema path and line number so misspellings cannot silently change validation.
+
 Validate `.env.example`:
 
 ```sh
