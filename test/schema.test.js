@@ -25,6 +25,34 @@ test("rejects schemas without a secrets map", () => {
   assert.throws(() => parseSchema("name: nope"), /top-level "secrets" map/);
 });
 
+test("rejects unknown top-level keys with source, key path, and line", () => {
+  assert.throws(
+    () => parseSchema(
+      "secrets:\n  API_KEY:\n    required: true\nversion: 1\n",
+      "config/secretshape.yaml",
+    ),
+    /config\/secretshape\.yaml:4: unsupported key "version"/,
+  );
+});
+
+test("rejects misspelled secret fields with source, key path, and line", () => {
+  assert.throws(
+    () => parseSchema(
+      "secrets:\n  API_KEY:\n    requred: false\n",
+      "config/secretshape.yaml",
+    ),
+    /config\/secretshape\.yaml:3: unsupported key "secrets\.API_KEY\.requred"/,
+  );
+
+  assert.throws(
+    () => parseSchema(
+      "secrets:\n  API_KEY:\n    required: true\n    patern: \"\^sk_\"\n",
+      "config/secretshape.yaml",
+    ),
+    /config\/secretshape\.yaml:4: unsupported key "secrets\.API_KEY\.patern"/,
+  );
+});
+
 test("rejects malformed patterns with the schema source and secret name", () => {
   assert.throws(
     () => parseSchema('secrets:\n  API_KEY:\n    pattern: "["\n', "config/secretshape.yaml"),
