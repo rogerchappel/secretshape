@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 
 const SECRET_NAME_PATTERN = /^[A-Z_][A-Z0-9_]*$/;
+const TOP_LEVEL_KEYS = new Set(["secrets"]);
+const SECRET_SHAPE_KEYS = new Set(["required", "pattern", "enum", "description"]);
 
 export async function loadSchema(path) {
   const source = await readFile(path, "utf8");
@@ -8,12 +10,14 @@ export async function loadSchema(path) {
 }
 
 export function parseSchema(source, sourceName = "schema") {
-  const parsed = parseYamlSubset(source, sourceName);
+  const { value: parsed, locations } = parseYamlSubset(source, sourceName);
   const secrets = parsed.secrets;
 
   if (!secrets || typeof secrets !== "object" || Array.isArray(secrets)) {
     throw new Error(`${sourceName}: expected top-level "secrets" map`);
   }
+
+  rejectUnsupportedKeys(parsed, TOP_LEVEL_KEYS, [], locations, sourceName);
 
   const entries = Object.entries(secrets).map(([name, shape]) => {
     if (!SECRET_NAME_PATTERN.test(name)) {
@@ -23,6 +27,14 @@ export function parseSchema(source, sourceName = "schema") {
     if (!shape || typeof shape !== "object" || Array.isArray(shape)) {
       throw new Error(`${sourceName}: secret "${name}" must be a map`);
     }
+
+    rejectUnsupportedKeys(
+      shape,
+      SECRET_SHAPE_KEYS,
+      ["secrets", name],
+      locations,
+      sourceName,
+    );
 
     const normalized = {
       name,
@@ -74,6 +86,7 @@ function parseYamlSubset(source, sourceName) {
   const root = {};
   const stack = [{ indent: -1, value: root, path: [] }];
   const definitions = new WeakMap([[root, new Map()]]);
+  const locations = new Map();
   const lines = source.split(/\r?\n/);
 
   for (const [index, rawLine] of lines.entries()) {
@@ -114,6 +127,7 @@ function parseYamlSubset(source, sourceName) {
       );
     }
     parentDefinitions.set(key, lineNumber);
+    locations.set([...stack.at(-1).path, key].join("."), lineNumber);
 
     if (rawValue === "") {
       const child = {};
@@ -125,7 +139,16 @@ function parseYamlSubset(source, sourceName) {
     }
   }
 
-  return root;
+  return { value: root, locations };
+}
+
+function rejectUnsupportedKeys(value, supportedKeys, parentPath, locations, sourceName) {
+  for (const key of Object.keys(value)) {
+    if (!supportedKeys.has(key)) {
+      const keyPath = [...parentPath, key].join(".");
+      throw new Error(`${sourceName}:${locations.get(keyPath)}: unsupported key "${keyPath}"`);
+    }
+  }
 }
 
 function parseScalar(value) {
