@@ -4,8 +4,9 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-check_json="/tmp/secretshape-team-onboarding-check.json"
-docs_md="/tmp/secretshape-team-onboarding.md"
+output_dir="${TMPDIR:-/tmp}"
+check_json="$output_dir/secretshape-team-onboarding-check.json"
+docs_md="$output_dir/secretshape-team-onboarding.md"
 
 node src/cli.js check \
   --schema examples/team-onboarding/secretshape.yaml \
