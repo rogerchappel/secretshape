@@ -12,7 +12,10 @@
   },
   "files": [
     "src",
-    "examples/basic",
+    "demo/*.sh",
+    "docs/promo",
+    "docs/tutorials",
+    "examples",
     "README.md",
     "SKILL.md",
     "LICENSE",
