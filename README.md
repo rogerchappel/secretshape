@@ -134,10 +134,10 @@ Additional onboarding assets from this sweep:
 
 ## Package Contents
 
-The npm package allowlist includes the runtime source, smoke script, public
-support docs, and `examples/basic` fixture. Run `npm run package:smoke` before
-publishing to confirm the tarball still includes the runnable CLI and example
-schema.
+The npm package allowlist includes the runtime source, smoke scripts, public
+support docs, and `examples/basic` fixture. `npm run package:smoke` packs and
+installs the tarball in a fresh temporary project, then exercises the installed
+CLI's check, init, and docs commands without publishing.
 
 ## Contributing
 
