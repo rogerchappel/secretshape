@@ -52,6 +52,11 @@ Validate `.env.example`:
 npx secretshape check --schema secretshape.yaml --example .env.example
 ```
 
+Unquoted values may have an inline comment when whitespace separates the value
+from `#`, for example `NODE_ENV=production # default runtime`. A `#` inside a
+quoted value, directly adjacent to an unquoted value, or escaped with a
+backslash is treated as literal value content.
+
 Each `pattern` must be valid JavaScript regular-expression syntax. SecretShape
 validates and compiles patterns when it loads the schema, so a malformed pattern
 reports the schema path and secret name before any environment values are
