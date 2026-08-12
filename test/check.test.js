@@ -79,3 +79,25 @@ test("duplicate variables fail checks for example and local files without exposi
   ]);
   assert.doesNotMatch(JSON.stringify(result), /example-(?:first|second)|local-(?:first|second)/);
 });
+
+test("validates enum and pattern values before unquoted inline comments", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "secretshape-comments-"));
+  const schemaPath = join(dir, "secretshape.yaml");
+  const examplePath = join(dir, ".env.example");
+  await writeFile(schemaPath, [
+    "secrets:",
+    "  NODE_ENV:",
+    "    enum: [production]",
+    "  REGION:",
+    "    pattern: ^[a-z]{2}-[a-z]+-[0-9]$",
+  ].join("\n"));
+  await writeFile(examplePath, [
+    "NODE_ENV=production # default runtime",
+    "REGION=ap-southeast-2 # deployment region",
+  ].join("\n"));
+
+  const result = await checkFiles({ schemaPath, examplePath });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.summary.errors, 0);
+});
