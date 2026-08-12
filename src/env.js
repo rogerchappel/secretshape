@@ -57,5 +57,27 @@ function normalizeValue(rawValue) {
   ) {
     return trimmed.slice(1, -1);
   }
-  return trimmed;
+
+  const comment = findInlineComment(trimmed, /^\s/.test(rawValue));
+  return (comment === -1 ? trimmed : trimmed.slice(0, comment)).trimEnd();
+}
+
+function findInlineComment(value, commentAtStart) {
+  for (let index = 0; index < value.length; index += 1) {
+    if (
+      value[index] !== "#" ||
+      (index === 0 ? !commentAtStart : !/\s/.test(value[index - 1]))
+    ) {
+      continue;
+    }
+
+    let backslashes = 0;
+    for (let cursor = index - 2; cursor >= 0 && value[cursor] === "\\"; cursor -= 1) {
+      backslashes += 1;
+    }
+    if (backslashes % 2 === 0) {
+      return index;
+    }
+  }
+  return -1;
 }
