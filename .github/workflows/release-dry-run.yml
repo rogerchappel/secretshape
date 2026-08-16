@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          registry-url: https://registry.npmjs.org
       - name: Install dependencies
         run: npm ci
       - name: Install ReleaseBox
@@ -39,6 +40,19 @@ jobs:
         run: node /tmp/releasebox/bin/releasebox.js check .
       - name: Run release checks
         run: npm run release:check
+      - name: Pack release artifact
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          tarball="$(npm pack --silent)"
+          if [[ -z "$tarball" || "$tarball" == *$'\n'* || "$tarball" == */* || ! -f "$tarball" ]]; then
+            echo "npm pack returned an invalid artifact name: $tarball" >&2
+            exit 1
+          fi
+          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
+      - name: Verify npm publication
+        run: npm publish "${{ steps.package.outputs.tarball }}" --access public --dry-run
       - name: Release notes preview
         run: |
           node /tmp/releasebox/bin/releasebox.js notes . > release-notes-preview.md
