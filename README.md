@@ -176,6 +176,12 @@ The committed `package-lock.json` is the release dependency source of truth.
 Keep it in sync with `package.json`; CI, release dry runs, and tagged releases
 all use `npm ci` so lockfile drift fails before publishing.
 
+The release dry run packs the package once and passes that captured tarball to
+`npm publish --dry-run`. A version tag follows the same flow with npm trusted
+publishing and provenance enabled, then attaches that exact tarball to the
+GitHub release. This keeps the registry package and GitHub artifact identical;
+the release workflows never repack between destinations.
+
 `scripts/validate.sh` runs the same package scripts and also runs
 `agent-qc ready` when that optional tool is installed. Missing `agent-qc` is
 treated as a skip, not a failure.
