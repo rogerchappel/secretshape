@@ -29,7 +29,13 @@ export async function main(argv = process.argv.slice(2), io = process) {
   const [command, ...args] = argv;
 
   try {
+    if ((command === "--help" || command === "-h") && args.length === 0) {
+      io.stdout.write(usage());
+      return 0;
+    }
+
     if (command === "init") {
+      rejectArguments(args);
       await writeFile("secretshape.yaml", DEFAULT_SCHEMA, { flag: "wx" });
       io.stdout.write("created secretshape.yaml\n");
       return 0;
@@ -73,6 +79,12 @@ export async function main(argv = process.argv.slice(2), io = process) {
   } catch (error) {
     io.stderr.write(`${error.message}\n`);
     return 1;
+  }
+}
+
+function rejectArguments(args) {
+  if (args.length > 0) {
+    throw new Error(`unexpected argument: ${args[0]}`);
   }
 }
 
