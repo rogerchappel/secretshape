@@ -1,9 +1,64 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { access, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { main } from "../src/cli.js";
+
+function captureIo() {
+  let stdout = "";
+  let stderr = "";
+  return {
+    io: {
+      stdout: { write: (value) => (stdout += value) },
+      stderr: { write: (value) => (stderr += value) },
+    },
+    output: () => ({ stdout, stderr }),
+  };
+}
+
+async function pathExists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+test("help exits successfully on stdout without creating a schema", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "secretshape-help-"));
+  const previousCwd = process.cwd();
+  const capture = captureIo();
+  process.chdir(dir);
+  try {
+    const code = await main(["--help"], capture.io);
+    assert.equal(code, 0);
+    assert.match(capture.output().stdout, /^Usage:/);
+    assert.equal(capture.output().stderr, "");
+    assert.equal(await pathExists(join(dir, "secretshape.yaml")), false);
+  } finally {
+    process.chdir(previousCwd);
+  }
+});
+
+for (const args of [["init", "unexpected"], ["init", "--bogus"]]) {
+  test(`init rejects ${args[1]} without creating a schema`, async () => {
+    const dir = await mkdtemp(join(tmpdir(), "secretshape-init-"));
+    const previousCwd = process.cwd();
+    const capture = captureIo();
+    process.chdir(dir);
+    try {
+      const code = await main(args, capture.io);
+      assert.equal(code, 1);
+      assert.equal(capture.output().stdout, "");
+      assert.match(capture.output().stderr, /unexpected argument/);
+      assert.equal(await pathExists(join(dir, "secretshape.yaml")), false);
+    } finally {
+      process.chdir(previousCwd);
+    }
+  });
+}
 
 test("check command emits JSON and returns non-zero on errors", async () => {
   const dir = await mkdtemp(join(tmpdir(), "secretshape-"));
