@@ -22,11 +22,24 @@ npm test
 
 ## Use
 
+Print command usage without creating files:
+
+```sh
+npx secretshape --help
+```
+
+`-h` is an equivalent short form. The CLI does not currently expose a
+`--version` option; use the installed package metadata (for example,
+`npm list secretshape`) when an exact package version is needed.
+
 Create a schema:
 
 ```sh
 npx secretshape init
 ```
+
+`init` accepts no options or positional arguments and refuses invalid input
+before creating `secretshape.yaml`.
 
 Example `secretshape.yaml`:
 
@@ -92,6 +105,21 @@ Generate Markdown docs:
 ```sh
 npx secretshape docs --schema secretshape.yaml --out docs/secrets.md
 ```
+
+## CLI options
+
+- `--help`, `-h`: print usage and exit successfully.
+- `check --schema <path>`: select the schema (default: `secretshape.yaml`).
+- `check --example <path>`: select the documented environment file (default:
+  `.env.example`).
+- `check --local <path>`: additionally validate a local environment file.
+- `check --json`: emit machine-readable results.
+- `docs --schema <path>`: select the schema used for generated documentation.
+- `docs --out <path>`: select the Markdown output (default:
+  `docs/secrets.md`).
+
+Unknown options and positional arguments exit non-zero without running the
+requested command.
 
 `check` accepts `--schema <path>`, `--example <path>`, `--local <path>`,
 `--json`, and `--fail-on-warning`. `docs` accepts `--schema <path>` and
