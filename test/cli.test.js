@@ -140,6 +140,27 @@ test("docs command writes markdown output", async () => {
   assert.match(await readFile(outPath, "utf8"), /API_KEY/);
 });
 
+test("docs command preserves markdown tables for special-character enum values", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "secretshape-"));
+  const schemaPath = join(dir, "secretshape.yaml");
+  const outPath = join(dir, "docs", "secrets.md");
+  await writeFile(
+    schemaPath,
+    'secrets:\n  MODE:\n    enum: ["left|right", "tick`value"]\n    description: "select a|b"\n',
+  );
+
+  const code = await main(["docs", "--schema", schemaPath, "--out", outPath], {
+    stdout: { write: () => {} },
+    stderr: { write: () => {} },
+  });
+
+  assert.equal(code, 0);
+  assert.match(
+    await readFile(outPath, "utf8"),
+    /\| `MODE` \| required \| one of: `left\\\|right`, ``tick`value`` \| select a\\\|b \|/,
+  );
+});
+
 test("check command can fail CI on stale documented warnings", async () => {
   const dir = await mkdtemp(join(tmpdir(), "secretshape-"));
   const schemaPath = join(dir, "secretshape.yaml");
