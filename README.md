@@ -106,6 +106,10 @@ Generate Markdown docs:
 npx secretshape docs --schema secretshape.yaml --out docs/secrets.md
 ```
 
+Generated enum values are rendered as inline code. Pipes and backtick runs in
+schema-parsed enum values are escaped or delimited so the generated output
+remains a valid four-column Markdown table.
+
 ## CLI options
 
 - `--help`, `-h`: print usage and exit successfully.
