@@ -13,6 +13,11 @@ format and uses semantic versioning when versioned releases are published.
 - Release-candidate quickstart, package contents notes, and committed example
   schema for smoke testing.
 
+### Fixed
+
+- Preserve Markdown table columns and inline-code formatting when generated
+  enum values contain pipes or backticks.
+
 ## Release Links
 
 - Unreleased:
