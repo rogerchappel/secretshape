@@ -168,7 +168,18 @@ function splitInlineList(value) {
   let current = "";
   let quote = null;
 
-  for (const char of value) {
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index];
+    if (quote === "\"" && char === "\\") {
+      current += char + (value[index + 1] ?? "");
+      index += 1;
+      continue;
+    }
+    if (quote === "'" && char === "'" && value[index + 1] === "'") {
+      current += "''";
+      index += 1;
+      continue;
+    }
     if ((char === "\"" || char === "'") && quote === null) {
       quote = char;
     } else if (char === quote) {
@@ -191,6 +202,14 @@ function stripComment(line) {
   let quote = null;
   for (let index = 0; index < line.length; index += 1) {
     const char = line[index];
+    if (quote === "\"" && char === "\\") {
+      index += 1;
+      continue;
+    }
+    if (quote === "'" && char === "'" && line[index + 1] === "'") {
+      index += 1;
+      continue;
+    }
     if ((char === "\"" || char === "'") && quote === null) {
       quote = char;
     } else if (char === quote) {
@@ -203,11 +222,11 @@ function stripComment(line) {
 }
 
 function unquote(value) {
-  if (
-    (value.startsWith("\"") && value.endsWith("\"")) ||
-    (value.startsWith("'") && value.endsWith("'"))
-  ) {
-    return value.slice(1, -1);
+  if (value.startsWith("\"") && value.endsWith("\"")) {
+    return JSON.parse(value);
+  }
+  if (value.startsWith("'") && value.endsWith("'")) {
+    return value.slice(1, -1).replaceAll("''", "'");
   }
   return value;
 }
