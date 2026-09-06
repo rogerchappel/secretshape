@@ -75,6 +75,11 @@ validates and compiles patterns when it loads the schema, so a malformed pattern
 reports the schema path and secret name before any environment values are
 checked.
 
+Schema scalars follow YAML quoting rules: single quotes escape an apostrophe by
+doubling it (`'it''s'`), while double quotes decode escapes such as `\\"`, `\\n`,
+and `\\\\`. Consequently, write a regular-expression digit escape as
+`pattern: "^\\\\d{4}$"`.
+
 Keys must be unique within each schema map: duplicate secret names and duplicate
 fields such as `required` are rejected with the schema path, key path, and line
 numbers. Variables must likewise appear only once in each example or local env
