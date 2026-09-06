@@ -67,6 +67,26 @@ test("compiles valid patterns when the schema is parsed", () => {
   assert.equal(schema.secrets.API_KEY.compiledPattern.test("invalid"), false);
 });
 
+test("decodes YAML double-quoted escapes before compiling patterns", () => {
+  const schema = parseSchema('secrets:\n  PIN:\n    pattern: "^\\\\d{4}$"\n');
+
+  assert.equal(schema.secrets.PIN.pattern, "^\\d{4}$");
+  assert.equal(schema.secrets.PIN.compiledPattern.test("1234"), true);
+  assert.equal(schema.secrets.PIN.compiledPattern.test("\\dddd"), false);
+});
+
+test("keeps escaped quotes and comment markers inside quoted scalars", () => {
+  const schema = parseSchema([
+    "secrets:",
+    "  TOKEN:",
+    '    description: "quoted \\\"value # retained\\\"" # discarded',
+    "    enum: ['it''s # literal', plain] # discarded",
+  ].join("\n"));
+
+  assert.equal(schema.secrets.TOKEN.description, 'quoted "value # retained"');
+  assert.deepEqual(schema.secrets.TOKEN.enum, ["it's # literal", "plain"]);
+});
+
 test("rejects duplicate secret names with source and line context", () => {
   assert.throws(
     () => parseSchema(
