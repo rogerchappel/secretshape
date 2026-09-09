@@ -65,8 +65,8 @@ Validate `.env.example`:
 npx secretshape check --schema secretshape.yaml --example .env.example
 ```
 
-Unquoted values may have an inline comment when whitespace separates the value
-from `#`, for example `NODE_ENV=production # default runtime`. A `#` inside a
+Quoted and unquoted values may have an inline comment when whitespace separates
+the value from `#`, for example `TOKEN="abc" # documented token`. A `#` inside a
 quoted value, directly adjacent to an unquoted value, or escaped with a
 backslash is treated as literal value content.
 
