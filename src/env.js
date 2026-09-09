@@ -51,11 +51,9 @@ export function parseEnvShape(source) {
 
 function normalizeValue(rawValue) {
   const trimmed = rawValue.trim();
-  if (
-    (trimmed.startsWith("\"") && trimmed.endsWith("\"")) ||
-    (trimmed.startsWith("'") && trimmed.endsWith("'"))
-  ) {
-    return trimmed.slice(1, -1);
+  const quoted = trimmed.match(/^(["'])(.*)\1(?:\s+#.*)?$/);
+  if (quoted) {
+    return quoted[2];
   }
 
   const comment = findInlineComment(trimmed, /^\s/.test(rawValue));
