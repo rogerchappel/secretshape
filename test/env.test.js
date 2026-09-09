@@ -23,6 +23,19 @@ test("removes whitespace-delimited inline comments from unquoted values", () => 
   assert.equal(parsed.entries.get("EMPTY").empty, true);
 });
 
+test("removes whitespace-delimited comments after quoted values", () => {
+  const parsed = parseEnvShape([
+    'DOUBLE="abc" # documented token',
+    "SINGLE='value # retained' # explanation",
+    'EMPTY="" # intentionally empty',
+  ].join("\n"));
+
+  assert.equal(parsed.entries.get("DOUBLE").value, "abc");
+  assert.equal(parsed.entries.get("SINGLE").value, "value # retained");
+  assert.equal(parsed.entries.get("EMPTY").value, "");
+  assert.equal(parsed.entries.get("EMPTY").empty, true);
+});
+
 test("preserves quoted, adjacent, and escaped hash characters", () => {
   const parsed = parseEnvShape([
     'DOUBLE="value # in quotes"',

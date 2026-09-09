@@ -82,6 +82,23 @@ test("check command emits JSON and returns non-zero on errors", async () => {
   assert.equal(JSON.parse(stdout).issues[0].code, "missing_required");
 });
 
+test("check --json accepts quoted values with inline comments", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "secretshape-quoted-comment-"));
+  const schemaPath = join(dir, "secretshape.yaml");
+  const examplePath = join(dir, ".env.example");
+  await writeFile(schemaPath, "secrets:\n  TOKEN:\n    enum: [abc]\n");
+  await writeFile(examplePath, 'TOKEN="abc" # documented token\n');
+  const capture = captureIo();
+
+  const code = await main(["check", "--schema", schemaPath, "--example", examplePath, "--json"], capture.io);
+
+  assert.equal(code, 0);
+  assert.equal(capture.output().stderr, "");
+  const result = JSON.parse(capture.output().stdout);
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.issues, []);
+});
+
 test("check and check --json fail on duplicate example and local variables", async () => {
   const dir = await mkdtemp(join(tmpdir(), "secretshape-"));
   const schemaPath = join(dir, "secretshape.yaml");
