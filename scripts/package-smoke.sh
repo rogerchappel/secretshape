@@ -36,6 +36,23 @@ cli="$consumer/node_modules/.bin/secretshape"
 installed_package="$consumer/node_modules/secretshape"
 basic="$installed_package/examples/basic"
 
+node --input-type=module - "$installed_package" <<'NODE'
+import assert from "node:assert/strict";
+import { access, readFile } from "node:fs/promises";
+import { join } from "node:path";
+
+const packageDir = process.argv[2];
+const manifest = JSON.parse(await readFile(join(packageDir, "package.json"), "utf8"));
+assert.equal(typeof manifest.bin?.secretshape, "string", "secretshape bin target must be declared");
+await access(join(packageDir, manifest.bin.secretshape));
+for (const dependency of Object.keys(manifest.dependencies ?? {})) {
+  await access(join(packageDir, "node_modules", dependency, "package.json"));
+}
+NODE
+
+"$cli" --help > help.out
+grep -q '^Usage:' help.out
+
 "$cli" check --schema "$basic/secretshape.yaml" --example "$basic/.env.example" > check.out
 grep -q '^secretshape: ok$' check.out
 
